@@ -1,0 +1,145 @@
+<!DOCTYPE html><html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pedidos de Lanches</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #fafafa;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      header {
+        background: #9c27b0;
+        color: #fff;
+        padding: 1rem;
+        text-align: center;
+      }
+      main {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+      }
+      .card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .card h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+      }
+      .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0.25rem 0;
+      }
+      .item-name {
+        flex: 1;
+      }
+      button.add {
+        background: #4caf50;
+        color: #fff;
+        border: none;
+        padding: 0.3rem 0.6rem;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      button.add:active {
+        transform: scale(0.96);
+      }
+      aside {
+        background: #fff;
+        border-top: 1px solid #e0e0e0;
+        padding: 1rem;
+      }
+      aside h3 {
+        margin-top: 0;
+      }
+      .cart-item {
+        display: flex;
+        justify-content: space-between;
+        margin: 0.25rem 0;
+      }
+      .total {
+        font-weight: bold;
+        margin-top: 0.5rem;
+      }
+      button.print {
+        background: #2196f3;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        width: 100%;
+        margin-top: 1rem;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      button.print:active {
+        transform: scale(0.98);
+      }
+      /* RECEIPT PRINT STYLES */
+      @media print {
+        @page {
+          size: 58mm auto;
+          margin: 0mm;
+        }
+        body {
+          margin: 0;
+          font-family: monospace;
+          width: 58mm;
+        }
+        .no-print {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Pedidos de Lanches 🍔🥤</h1>
+    </header><main id="menu"></main>
+
+<aside class="no-print">
+  <h3>Seu Pedido</h3>
+  <div id="cart"></div>
+  <div class="total">Total: R$ <span id="total">0,00</span></div>
+  <button class="print" onclick="handlePrint()">Imprimir Pedido</button>
+</aside>
+
+<script>
+  // ================== CONFIGURAÇÃO DOS ITENS ==================
+  // Preencha o campo price quando tiver os valores
+  const items = [
+    { category: "Açaí", name: "Açaí Copo 330ml", price: 0 },
+    { category: "Açaí", name: "Açaí Copo 500ml", price: 0 },
+    { category: "Lanches", name: "Xis Salada", price: 0 },
+    { category: "Lanches", name: "Xis Coração", price: 0 },
+    { category: "Lanches", name: "Cachorro Quente Simples", price: 0 },
+    { category: "Lanches", name: "Cachorro Quente Completo", price: 0 },
+    { category: "Lanches", name: "Prensada Bife e Ovo", price: 0 },
+    { category: "Sucos", name: "Suco de Laranja", price: 0 },
+    { category: "Sucos", name: "Suco de Limão", price: 0 }
+  ];
+
+  const cart = [];
+
+  function renderMenu() {
+    const menu = document.getElementById("menu");
+    menu.innerHTML =
